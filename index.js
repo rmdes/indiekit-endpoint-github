@@ -82,6 +82,7 @@ export default class GitHubEndpoint {
     // JSON API for widgets - publicly accessible
     publicRouter.get("/api/commits", commitsController.api);
     publicRouter.get("/api/stars", starsController.api);
+    publicRouter.get("/api/contributions", contributionsController.api);
     publicRouter.get("/api/activity", activityController.api);
     publicRouter.get("/api/featured", featuredController.api);
 
