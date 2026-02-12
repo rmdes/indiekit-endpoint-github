@@ -1,6 +1,6 @@
-{% extends "document.njk" %}
+{% extends "layouts/github.njk" %}
 
-{% block content %}
+{% block github %}
   {% if error %}
     {{ prose({ text: error.message }) }}
   {% elif stars and stars.length > 0 %}

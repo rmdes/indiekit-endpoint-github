@@ -1,13 +1,12 @@
-{% extends "document.njk" %}
+{% extends "layouts/github.njk" %}
 
-{% block content %}
+{% block github %}
   {% if error %}
     {{ prose({ text: error.message }) }}
   {% else %}
     {# Featured Projects #}
     {% if featured and featured.length > 0 %}
-    <section class="github-section">
-      <h2>{{ __("github.featured.title") }}</h2>
+    {% call section({ title: __("github.featured.title") }) %}
       <div class="github-featured">
         {% for repo in featured %}
         <article class="github-featured__repo">
@@ -30,8 +29,7 @@
             {% endif %}
           </div>
           {% if repo.commits and repo.commits.length > 0 %}
-          <details class="github-featured__commits">
-            <summary>Recent commits ({{ repo.commits.length }})</summary>
+          {% call details({ summary: "Recent commits (" ~ repo.commits.length ~ ")" }) %}
             <ul class="github-commit-list">
               {% for commit in repo.commits %}
               <li>
@@ -41,17 +39,16 @@
               </li>
               {% endfor %}
             </ul>
-          </details>
+          {% endcall %}
           {% endif %}
         </article>
         {% endfor %}
       </div>
-    </section>
+    {% endcall %}
     {% endif %}
 
     {# Recent Commits #}
-    <section class="github-section">
-      <h2>{{ __("github.commits.title") }}</h2>
+    {% call section({ title: __("github.commits.title") }) %}
       {% if commits and commits.length > 0 %}
       <ul class="github-list">
         {% for commit in commits %}
@@ -67,11 +64,10 @@
       {% else %}
       {{ prose({ text: __("github.commits.none") }) }}
       {% endif %}
-    </section>
+    {% endcall %}
 
     {# Recently Starred #}
-    <section class="github-section">
-      <h2>{{ __("github.stars.title") }}</h2>
+    {% call section({ title: __("github.stars.title") }) %}
       {% if stars and stars.length > 0 %}
       <ul class="github-list github-list--grid">
         {% for star in stars %}
@@ -92,12 +88,11 @@
       {% else %}
       {{ prose({ text: __("github.stars.none") }) }}
       {% endif %}
-    </section>
+    {% endcall %}
 
     {# PRs & Issues #}
     {% if contributions and contributions.length > 0 %}
-    <section class="github-section">
-      <h2>{{ __("github.contributions.title") }}</h2>
+    {% call section({ title: __("github.contributions.title") }) %}
       <ul class="github-list">
         {% for item in contributions %}
         <li class="github-list__item">
@@ -113,12 +108,11 @@
         </li>
         {% endfor %}
       </ul>
-    </section>
+    {% endcall %}
     {% endif %}
 
     {# My Repositories #}
-    <section class="github-section">
-      <h2>{{ __("github.repos.title") }}</h2>
+    {% call section({ title: __("github.repos.title") }) %}
       {% if repositories and repositories.length > 0 %}
       <ul class="github-list github-list--grid">
         {% for repo in repositories %}
@@ -150,6 +144,6 @@
       {% else %}
       {{ prose({ text: __("github.repos.none") }) }}
       {% endif %}
-    </section>
+    {% endcall %}
   {% endif %}
 {% endblock %}

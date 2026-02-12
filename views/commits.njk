@@ -1,6 +1,6 @@
-{% extends "document.njk" %}
+{% extends "layouts/github.njk" %}
 
-{% block content %}
+{% block github %}
   {% if error %}
     {{ prose({ text: error.message }) }}
   {% elif commits and commits.length > 0 %}
