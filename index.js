@@ -1,6 +1,7 @@
 import express from "express";
 
 import { activityController } from "./lib/controllers/activity.js";
+import { changelogController } from "./lib/controllers/changelog.js";
 import { commitsController } from "./lib/controllers/commits.js";
 import { contributionsController } from "./lib/controllers/contributions.js";
 import { dashboardController } from "./lib/controllers/dashboard.js";
@@ -85,6 +86,7 @@ export default class GitHubEndpoint {
     publicRouter.get("/api/contributions", contributionsController.api);
     publicRouter.get("/api/activity", activityController.api);
     publicRouter.get("/api/featured", featuredController.api);
+    publicRouter.get("/api/changelog", changelogController.api);
 
     return publicRouter;
   }
