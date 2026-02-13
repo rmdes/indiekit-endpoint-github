@@ -1,4 +1,6 @@
 import express from "express";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
 
 import { activityController } from "./lib/controllers/activity.js";
 import { changelogController } from "./lib/controllers/changelog.js";
@@ -38,6 +40,10 @@ export default class GitHubEndpoint {
 
   get environment() {
     return ["GITHUB_TOKEN"];
+  }
+
+  get localesDirectory() {
+    return path.join(path.dirname(fileURLToPath(import.meta.url)), "locales");
   }
 
   get navigationItems() {
