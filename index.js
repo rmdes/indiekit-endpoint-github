@@ -9,6 +9,7 @@ import { contributionsController } from "./lib/controllers/contributions.js";
 import { dashboardController } from "./lib/controllers/dashboard.js";
 import { featuredController } from "./lib/controllers/featured.js";
 import { starsController } from "./lib/controllers/stars.js";
+import { starredController } from "./lib/controllers/starred.js";
 
 // Module-level routers (matching Indiekit's endpoint pattern)
 const protectedRouter = express.Router();
@@ -77,6 +78,7 @@ export default class GitHubEndpoint {
     protectedRouter.get("/contributions", contributionsController.get);
     protectedRouter.get("/activity", activityController.get);
     protectedRouter.get("/featured", featuredController.get);
+    protectedRouter.get("/starred/sync", starredController.sync);
 
     return protectedRouter;
   }
@@ -93,6 +95,8 @@ export default class GitHubEndpoint {
     publicRouter.get("/api/activity", activityController.api);
     publicRouter.get("/api/featured", featuredController.api);
     publicRouter.get("/api/changelog", changelogController.api);
+    publicRouter.get("/api/starred/all", starredController.all);
+    publicRouter.get("/api/starred/recent", starredController.recent);
 
     return publicRouter;
   }
@@ -100,8 +104,24 @@ export default class GitHubEndpoint {
   init(Indiekit) {
     Indiekit.addEndpoint(this);
 
-    // Store GitHub config in application for controller access
+    // Register MongoDB collections for starred cache
+    Indiekit.addCollection("github_stars");
+    Indiekit.addCollection("github_sync_state");
+
+    // Store config and DB getter for controller access
     Indiekit.config.application.githubConfig = this.options;
     Indiekit.config.application.githubEndpoint = this.mountPath;
+    Indiekit.config.application.getGithubDb = () => Indiekit.database;
+
+    // Start background sync for starred repos (if token + DB available)
+    if (this.options.token && Indiekit.database) {
+      import("./lib/starred-sync.js")
+        .then(({ startStarredSync }) => {
+          startStarredSync(Indiekit, this.options);
+        })
+        .catch((error) => {
+          console.error("[GitHub Stars] Sync scheduler failed to start:", error.message);
+        });
+    }
   }
 }
