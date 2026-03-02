@@ -1,6 +1,6 @@
 {
   "name": "@rmdes/indiekit-endpoint-github",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "GitHub activity endpoint for Indiekit. Display commits, stars, contributions, and featured repositories.",
   "keywords": [
     "indiekit",
