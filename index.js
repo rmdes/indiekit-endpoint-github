@@ -2,6 +2,8 @@ import express from "express";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
+import { waitForReady } from "@rmdes/indiekit-startup-gate";
+
 import { activityController } from "./lib/controllers/activity.js";
 import { changelogController } from "./lib/controllers/changelog.js";
 import { commitsController } from "./lib/controllers/commits.js";
@@ -115,13 +117,22 @@ export default class GitHubEndpoint {
 
     // Start background sync for starred repos (if token + DB available)
     if (this.options.token && Indiekit.database) {
-      import("./lib/starred-sync.js")
-        .then(({ startStarredSync }) => {
-          startStarredSync(Indiekit, this.options);
-        })
-        .catch((error) => {
-          console.error("[GitHub Stars] Sync scheduler failed to start:", error.message);
-        });
+      this._stopGate = waitForReady(
+        () => {
+          import("./lib/starred-sync.js")
+            .then(({ startStarredSync }) => {
+              startStarredSync(Indiekit, this.options);
+            })
+            .catch((error) => {
+              console.error("[GitHub Stars] Sync scheduler failed to start:", error.message);
+            });
+        },
+        { label: "GitHub" },
+      );
     }
+  }
+
+  destroy() {
+    this._stopGate?.();
   }
 }
