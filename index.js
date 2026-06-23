@@ -12,6 +12,8 @@ import { dashboardController } from "./lib/controllers/dashboard.js";
 import { featuredController } from "./lib/controllers/featured.js";
 import { starsController } from "./lib/controllers/stars.js";
 import { starredController } from "./lib/controllers/starred.js";
+import { reposController } from "./lib/controllers/repos.js";
+import { GITHUB_BLOCKS } from "./lib/blocks.js";
 
 // Module-level routers (matching Indiekit's endpoint pattern)
 const protectedRouter = express.Router();
@@ -66,6 +68,10 @@ export default class GitHubEndpoint {
     };
   }
 
+  get blocks() {
+    return GITHUB_BLOCKS;
+  }
+
   /**
    * Protected routes (require authentication)
    * HTML pages for admin dashboard
@@ -99,6 +105,7 @@ export default class GitHubEndpoint {
     publicRouter.get("/api/changelog", changelogController.api);
     publicRouter.get("/api/starred/all", starredController.all);
     publicRouter.get("/api/starred/recent", starredController.recent);
+    publicRouter.get("/api/repos", reposController.api);
 
     return publicRouter;
   }
